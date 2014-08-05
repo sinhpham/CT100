@@ -8,8 +8,6 @@ namespace CT100
         public HomeVM()
         {
             Devices = new ObservableCollection<Device>();
-
-            Devices.Add(new Device() { Name = "abc" });
         }
 
         public ObservableCollection<Device> Devices { get; private set; }
