@@ -8,6 +8,8 @@ namespace CT100
         public HomeVM()
         {
             Devices = new ObservableCollection<Device>();
+
+            Devices.Add(new Device(){ Name = "aaa" });
         }
 
         public ObservableCollection<Device> Devices { get; private set; }
@@ -15,7 +17,9 @@ namespace CT100
 
     public class Device
     {
-        public string Name{ get; set; }
+        public string Name { get; set; }
+
+        public string UUID { get; set; }
 
         public override string ToString()
         {

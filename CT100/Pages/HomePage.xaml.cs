@@ -13,6 +13,8 @@ namespace CT100
 
             BindingContext = new HomeVM();
             var ble = DependencyService.Get<IBLE>();
+            ble.Init();
+
             ble.DeviceFound += (sender, e) =>
             {
                 VM.Devices.Add(e.Device);
@@ -38,7 +40,7 @@ namespace CT100
                 ble.Connect(d);
                 _listView.SelectedItem = null;
 
-                var dp = new DevicePage();
+                var dp = new DevicePage(d);
 
                 Navigation.PushAsync(dp);
             };

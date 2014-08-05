@@ -5,21 +5,16 @@ using MonoTouch.CoreFoundation;
 using System.Diagnostics;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
+using MonoTouch.Foundation;
+using System.Linq;
 
 [assembly: Xamarin.Forms.Dependency(typeof(BLE))]
 namespace CT100.iOS
 {
     public class BLE : IBLE
     {
-        public void Scan()
+        public void Init()
         {
-            if (_cbcm != null)
-            {
-                _cbcm.StopScan();
-                _cbcm.ScanForPeripherals((CBUUID[])null, (PeripheralScanningOptions)null);
-                return;
-            }
-
             _cbcm = new CBCentralManager(new BTDelegate(), DispatchQueue.MainQueue);
 
             _cbcm.UpdatedState += (object sender, EventArgs e) =>
@@ -27,17 +22,79 @@ namespace CT100.iOS
                 Debug.WriteLine("state updated event");
                 if (_cbcm.State == CBCentralManagerState.PoweredOn)
                 {
-                    Debug.WriteLine("scanning");
-                    _cbcm.ScanForPeripherals((CBUUID[])null, (PeripheralScanningOptions)null);
+                    Debug.WriteLine("powered on");
                 }
             };
 
             _cbcm.DiscoveredPeripheral += (object s, CBDiscoveredPeripheralEventArgs e) =>
             {
-                var d = new Device() { Name = e.Peripheral.Name }; 
-                _devToPer.Add(d, e.Peripheral);
+                var d = new Device() { Name = e.Peripheral.Name, UUID = e.Peripheral.Identifier.AsString() }; 
+                _perList.Add(e.Peripheral);
                 RaiseDeviceFound(d);
                 Console.WriteLine("Found: {0}", e.Peripheral.Name);
+            };
+
+            _cbcm.ConnectedPeripheral += (sender, e) =>
+            {
+                _connectedPer = e.Peripheral;
+                _connectedPer.DiscoveredService += (object sper, NSErrorEventArgs ev) =>
+                {
+                    if (_connectedPer.Services == null)
+                    {
+                        _connectedPer.DiscoverServices();
+                        return;
+                    }
+
+                    foreach (var ser in  _connectedPer.Services)
+                    {
+                        if (ser.UUID.ToString().Equals("FFA0", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _accService = ser;
+                            Console.WriteLine("Got acc service");
+                            _connectedPer.DiscoverCharacteristics(_accService);
+                        }
+                    }
+                };
+
+                _connectedPer.DiscoverCharacteristic += (object persender, CBServiceEventArgs pere) =>
+                {
+                    Console.WriteLine("characteristic dis");
+                    if (pere.Service == _accService)
+                    {
+                        foreach (var charac in _accService.Characteristics)
+                        {
+                            if (charac.UUID.ToString().Equals("FFA1", StringComparison.OrdinalIgnoreCase))
+                            {
+                                Console.WriteLine("got acc config charac");
+
+                                var dataBytes = new byte[1] { 0x01 };
+                                var nsd = NSData.FromArray(dataBytes);
+
+                                _connectedPer.WriteValue(nsd, charac, CBCharacteristicWriteType.WithResponse);
+                            }
+                            else if (charac.UUID.ToString().Equals("FFA5", StringComparison.OrdinalIgnoreCase))
+                            {
+                                Console.WriteLine("got acc data z charac");
+                                _connectedPer.SetNotifyValue(true, charac);
+                                _accData = charac;
+                            }
+                        }
+                    }
+                };
+
+                _connectedPer.UpdatedCharacterteristicValue += (perSender, pere) =>
+                {
+                    var valArr = pere.Characteristic.Value.ToArray();
+
+                    if (pere.Characteristic.UUID == CBUUID.FromString("FFA5"))
+                    {
+                        var bValue = (sbyte)(valArr[0]);
+                        var zValue = calcAccel(bValue);
+                        Debug.WriteLine("z value: {0}", zValue);
+                    }
+                };
+
+                _connectedPer.DiscoverServices();
             };
 
             _cbcm.DisconnectedPeripheral += (object sender, CBPeripheralErrorEventArgs e) =>
@@ -63,26 +120,47 @@ namespace CT100.iOS
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
                 // Trying to reconnect
-//                var perList = _cbcm.RetrievePeripheralsWithIdentifiers(_connectedUUID);
-//                var cPer = perList.FirstOrDefault(x => x.Identifier == _connectedUUID);
-//                if (cPer != null)
-//                {
-//                    _cbcm.ConnectPeripheral(cPer);
-//                }
+                //                var perList = _cbcm.RetrievePeripheralsWithIdentifiers(_connectedUUID);
+                //                var cPer = perList.FirstOrDefault(x => x.Identifier == _connectedUUID);
+                //                if (cPer != null)
+                //                {
+                //                    _cbcm.ConnectPeripheral(cPer);
+                //                }
 
             };
         }
 
-        public void Connect(Device d)
+        public void Scan()
         {
-            var per = _devToPer[d];
-            _cbcm.StopScan();
-            _cbcm.ConnectPeripheral(per);
+            _cbcm.ScanForPeripherals((CBUUID[])null, (PeripheralScanningOptions)null);
         }
 
-        Dictionary<Device, CBPeripheral> _devToPer = new Dictionary<Device, CBPeripheral>();
+        public void Connect(Device d)
+        {
+            var currPer = _perList.FirstOrDefault(p => string.CompareOrdinal(p.Identifier.AsString(), d.UUID) == 0);
+
+            if (currPer != null)
+            {
+                _cbcm.StopScan();
+                _cbcm.ConnectPeripheral(currPer);
+
+
+
+            }
+        }
+
+        public byte[] ReadData()
+        {
+            _connectedPer.ReadValue(_accData);
+
+            return null;
+        }
 
         CBCentralManager _cbcm;
+        List<CBPeripheral> _perList = new List<CBPeripheral>();
+        CBPeripheral _connectedPer;
+        CBService _accService;
+        CBCharacteristic _accData;
 
         public event EventHandler<DeviceFoundEventArgs> DeviceFound;
 
@@ -93,6 +171,14 @@ namespace CT100.iOS
             {
                 handler(this, new DeviceFoundEventArgs(){ Device = d });
             }
+        }
+
+        float calcAccel(sbyte rawX)
+        {
+            float v;
+            //-- calculate acceleration, unit g, range -2, +2
+            v = (float)((rawX * 1.0) / (64));
+            return v;
         }
     }
 

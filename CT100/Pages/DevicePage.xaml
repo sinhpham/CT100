@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="CT100.DevicePage">
 	<ContentPage.Content>
+		<TableView Intent="Form">
+			<TableSection Title="Data">
+				<TextCell x:Name="_batt" Text="abc" Detail="xyz" />
+			</TableSection>
+			<TableSection Title="Settings">
+				<TextCell Text="Enable alert" Detail="xyz" />
+			</TableSection>
+		</TableView>
 	</ContentPage.Content>
 </ContentPage>
