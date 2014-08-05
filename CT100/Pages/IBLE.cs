@@ -5,6 +5,7 @@ namespace CT100
     public interface IBLE
     {
         void Scan();
+        void Connect(Device d);
         event EventHandler<DeviceFoundEventArgs> DeviceFound;
     }
 

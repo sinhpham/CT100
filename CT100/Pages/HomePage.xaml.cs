@@ -30,6 +30,19 @@ namespace CT100
                 ble.Scan();
             });
 
+            _listView.ItemSelected += (sender, e) =>
+            {
+                if (e.SelectedItem == null) return;
+
+                var d = (Device)e.SelectedItem;
+                ble.Connect(d);
+                _listView.SelectedItem = null;
+
+                var dp = new DevicePage();
+
+                Navigation.PushAsync(dp);
+            };
+
             ToolbarItems.Add(scanTI);
         }
 

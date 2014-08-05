@@ -4,14 +4,13 @@ using MonoTouch.CoreBluetooth;
 using MonoTouch.CoreFoundation;
 using System.Diagnostics;
 using MonoTouch.UIKit;
+using System.Collections.Generic;
 
 [assembly: Xamarin.Forms.Dependency(typeof(BLE))]
 namespace CT100.iOS
 {
     public class BLE : IBLE
     {
-
-
         public void Scan()
         {
             if (_cbcm != null)
@@ -35,7 +34,9 @@ namespace CT100.iOS
 
             _cbcm.DiscoveredPeripheral += (object s, CBDiscoveredPeripheralEventArgs e) =>
             {
-                RaiseDeviceFound(new Device() { Name = e.Peripheral.Name });
+                var d = new Device() { Name = e.Peripheral.Name }; 
+                _devToPer.Add(d, e.Peripheral);
+                RaiseDeviceFound(d);
                 Console.WriteLine("Found: {0}", e.Peripheral.Name);
             };
 
@@ -71,6 +72,15 @@ namespace CT100.iOS
 
             };
         }
+
+        public void Connect(Device d)
+        {
+            var per = _devToPer[d];
+            _cbcm.StopScan();
+            _cbcm.ConnectPeripheral(per);
+        }
+
+        Dictionary<Device, CBPeripheral> _devToPer = new Dictionary<Device, CBPeripheral>();
 
         CBCentralManager _cbcm;
 
