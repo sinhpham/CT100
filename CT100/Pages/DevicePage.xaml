@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="CT100.DevicePage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:CT100;assembly=CT100" x:Class="CT100.DevicePage">
 	<ContentPage.Content>
 		<TableView Intent="Form">
 			<TableSection Title="Data">
-				<TextCell x:Name="_batt" Text="abc" Detail="xyz" />
+				<TextCell x:Name="_batt" Text="Battery" Detail="xyz" />
+				<local:StyledTextCell x:Name="_zVal" Text="Z Value" Detail="{Binding DeviceData.ZVal}" Style="Value1" />
 			</TableSection>
 			<TableSection Title="Settings">
 				<TextCell Text="Enable alert" Detail="xyz" />

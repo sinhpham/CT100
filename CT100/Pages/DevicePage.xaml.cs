@@ -7,9 +7,11 @@ namespace CT100
 {
     public partial class DevicePage : ContentPage
     {
-        public DevicePage(Device currDev)
+        public DevicePage(CT100Device currDev)
         {
             InitializeComponent();
+
+            BindingContext = new DeviceVM(){ DeviceData = currDev };
 
             var ble = DependencyService.Get<IBLE>();
 
@@ -20,6 +22,13 @@ namespace CT100
 
             });
         }
+    }
+
+    public class StyledTextCell : TextCell
+    {
+        public string Style{ get; set; }
+
+        public string Accessory{ get; set; }
     }
 }
 

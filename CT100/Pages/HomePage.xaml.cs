@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace CT100
 {
@@ -13,30 +14,48 @@ namespace CT100
 
             BindingContext = new HomeVM();
             var ble = DependencyService.Get<IBLE>();
-            ble.Init();
+
+            try
+            {
+                ble.Init();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                DisplayAlert("Alert", ioe.Message, "OK");
+            }
 
             ble.DeviceFound += (sender, e) =>
             {
                 VM.Devices.Add(e.Device);
             };
 
-            var scanTI = new ToolbarItem(){ Name = "scan" };
+            const string scanStr = "scan";
+            var scanTI = new ToolbarItem(){ Name = scanStr };
             scanTI.Command = new Command(obj =>
             {
-                scanTI.Name = scanTI.Name == "scan" ? "stop" : "scan";
-                // Force refresh toolbar items UI.
-                ToolbarItems.Remove(scanTI);
-                ToolbarItems.Add(scanTI);
-
-
-                ble.Scan();
+                if (string.CompareOrdinal(scanTI.Name, scanStr) == 0)
+                {
+                    // Need to scan.
+                    if (ble.Scan())
+                    {
+                        scanTI.Name = "stop";
+                        // Force refresh UI.
+                        ToolbarItems.Remove(scanTI);
+                        ToolbarItems.Add(scanTI);
+                    }
+                }
+                else
+                {
+                    // TODO: Need to stop scanning.
+                }
             });
 
             _listView.ItemSelected += (sender, e) =>
             {
-                if (e.SelectedItem == null) return;
+                if (e.SelectedItem == null)
+                    return;
 
-                var d = (Device)e.SelectedItem;
+                var d = (CT100Device)e.SelectedItem;
                 ble.Connect(d);
                 _listView.SelectedItem = null;
 
@@ -49,11 +68,6 @@ namespace CT100
         }
 
         public HomeVM VM { get { return (HomeVM)BindingContext; } }
-    }
-
-    public class TextCellWithDisclosure : TextCell
-    {
-
     }
 }
 

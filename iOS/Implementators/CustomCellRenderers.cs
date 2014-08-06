@@ -6,15 +6,17 @@ using System.ComponentModel;
 using CT100;
 using CT100.iOS;
 
-[assembly: ExportRenderer(typeof(TextCellWithDisclosure), typeof(TextCellWithDisclosureRenderer))]
+[assembly: ExportRenderer(typeof(StyledTextCell), typeof(StyledTextCellRenderer))]
 namespace CT100.iOS
 {
-    public class TextCellWithDisclosureRenderer : TextCellRenderer
+    public class StyledTextCellRenderer : TextCellRenderer
     {
         public override UITableViewCell GetCell(Xamarin.Forms.Cell item, UITableView tv)
         {
-            TextCell textCell = (TextCell)item;
-            UITableViewCellStyle style = UITableViewCellStyle.Value1;
+            var sTextCell = (StyledTextCell)item;
+            var style = UITableViewCellStyle.Default;
+            Enum.TryParse(sTextCell.Style, out style);
+
             string text = "Xamarin.Forms.TextCell";
             CellTableViewCell cellTableViewCell = tv.DequeueReusableCell(text) as CellTableViewCell;
             if (cellTableViewCell == null)
@@ -25,17 +27,22 @@ namespace CT100.iOS
             {
                 cellTableViewCell.Cell.PropertyChanged -= new PropertyChangedEventHandler(cellTableViewCell.HandlePropertyChanged);
             }
-            cellTableViewCell.Cell = textCell;
-            textCell.PropertyChanged += new PropertyChangedEventHandler(cellTableViewCell.HandlePropertyChanged);
+            cellTableViewCell.Cell = sTextCell;
+            sTextCell.PropertyChanged += new PropertyChangedEventHandler(cellTableViewCell.HandlePropertyChanged);
             cellTableViewCell.PropertyChanged = new Action<object, PropertyChangedEventArgs>(this.HandlePropertyChanged);
-            cellTableViewCell.TextLabel.Text = textCell.Text;
-            cellTableViewCell.DetailTextLabel.Text = textCell.Detail;
-            //cellTableViewCell.TextLabel.TextColor = textCell.TextColor.ToUIColor(TextCellRenderer.DefaultTextColor);
-            //cellTableViewCell.DetailTextLabel.TextColor = textCell.DetailColor.ToUIColor(TextCellRenderer.DefaultDetailColor);
+            cellTableViewCell.TextLabel.Text = sTextCell.Text;
+
+            if (cellTableViewCell.DetailTextLabel != null)
+            {
+                cellTableViewCell.DetailTextLabel.Text = sTextCell.Detail;
+            }
+
             base.UpdateBackground(cellTableViewCell, item);
 
+            var acc = UITableViewCellAccessory.None;
+            Enum.TryParse(sTextCell.Accessory, out acc);
 
-            cellTableViewCell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            cellTableViewCell.Accessory = acc;
 
             return cellTableViewCell;
         }

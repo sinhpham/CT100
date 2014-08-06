@@ -19,16 +19,16 @@ namespace CT100.iOS
 
             _cbcm.UpdatedState += (object sender, EventArgs e) =>
             {
-                Debug.WriteLine("state updated event");
-                if (_cbcm.State == CBCentralManagerState.PoweredOn)
+                Debug.WriteLine("ble state updated: {0}", _cbcm.State);
+                if (_cbcm.State == CBCentralManagerState.Unsupported || _cbcm.State == CBCentralManagerState.Unauthorized)
                 {
-                    Debug.WriteLine("powered on");
+                    throw new InvalidOperationException("Bluetooth not supported");
                 }
             };
 
             _cbcm.DiscoveredPeripheral += (object s, CBDiscoveredPeripheralEventArgs e) =>
             {
-                var d = new Device() { Name = e.Peripheral.Name, UUID = e.Peripheral.Identifier.AsString() }; 
+                var d = new CT100Device() { Name = e.Peripheral.Name, UUID = e.Peripheral.Identifier.AsString() }; 
                 _perList.Add(e.Peripheral);
                 RaiseDeviceFound(d);
                 Console.WriteLine("Found: {0}", e.Peripheral.Name);
@@ -90,7 +90,8 @@ namespace CT100.iOS
                     {
                         var bValue = (sbyte)(valArr[0]);
                         var zValue = calcAccel(bValue);
-                        Debug.WriteLine("z value: {0}", zValue);
+                        _connectedDevice.ZVal = zValue;
+                        //Debug.WriteLine("z value: {0}", zValue);
                     }
                 };
 
@@ -130,22 +131,26 @@ namespace CT100.iOS
             };
         }
 
-        public void Scan()
+        public bool Scan()
         {
-            _cbcm.ScanForPeripherals((CBUUID[])null, (PeripheralScanningOptions)null);
+            if (_cbcm.State == CBCentralManagerState.PoweredOn)
+            {
+                _cbcm.ScanForPeripherals((CBUUID[])null, (PeripheralScanningOptions)null);
+                return true;
+            }
+            return false;
         }
 
-        public void Connect(Device d)
+        public void Connect(CT100Device d)
         {
+            _connectedDevice = d;
+
             var currPer = _perList.FirstOrDefault(p => string.CompareOrdinal(p.Identifier.AsString(), d.UUID) == 0);
 
             if (currPer != null)
             {
                 _cbcm.StopScan();
                 _cbcm.ConnectPeripheral(currPer);
-
-
-
             }
         }
 
@@ -159,12 +164,13 @@ namespace CT100.iOS
         CBCentralManager _cbcm;
         List<CBPeripheral> _perList = new List<CBPeripheral>();
         CBPeripheral _connectedPer;
+        CT100Device _connectedDevice;
         CBService _accService;
         CBCharacteristic _accData;
 
         public event EventHandler<DeviceFoundEventArgs> DeviceFound;
 
-        public void RaiseDeviceFound(Device d)
+        public void RaiseDeviceFound(CT100Device d)
         {
             var handler = DeviceFound;
             if (handler != null)

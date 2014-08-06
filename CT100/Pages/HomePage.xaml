@@ -4,7 +4,7 @@
 		<ListView x:Name="_listView" ItemsSource="{Binding Devices}">
 		<ListView.ItemTemplate>
       <DataTemplate>
-        <local:TextCellWithDisclosure Text="{Binding Name}"/>
+        <local:StyledTextCell Text="{Binding Name}" Accessory="DisclosureIndicator"/>
       </DataTemplate>
     </ListView.ItemTemplate>
 		</ListView>
