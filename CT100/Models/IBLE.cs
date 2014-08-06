@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace CT100
 {
@@ -8,7 +9,7 @@ namespace CT100
         bool Scan();
         void Connect(CT100Device d);
         event EventHandler<DeviceFoundEventArgs> DeviceFound;
-        byte[] ReadData();
+        void ReadData<T>(Expression<Func<T>> selectorExpression);
     }
 
     public class DeviceFoundEventArgs : EventArgs

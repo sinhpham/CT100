@@ -17,11 +17,17 @@ namespace CT100
 
             _batt.Command = new Command(() =>
             {
-                Debug.WriteLine("batt tapped");
-                var ret = ble.ReadData();
+                ble.ReadData(() => VM.DeviceData.BatteryLevel);
 
             });
+
+            _count.Command = new Command(() =>
+            {
+                ble.ReadData(() => VM.DeviceData.RadCount);
+            });
         }
+
+        public DeviceVM VM { get { return (DeviceVM)BindingContext; } }
     }
 
     public class StyledTextCell : TextCell
