@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:CT100;assembly=CT100" x:Class="CT100.DevicePage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:local="clr-namespace:CT100;assembly=CT100" x:Class="CT100.DevicePage">
 	<ContentPage.Content>
 		<Grid x:Name="_grid" BackgroundColor="Green">
 			<Grid.RowDefinitions>
@@ -18,6 +18,16 @@
 				</TableSection>
 				<TableSection Title="Settings">
 					<SwitchCell x:Name="_accelEnable" Text="Enable alert" On="{Binding DeviceData.AccelEnable}" />
+					<SwitchCell Text="Enable buzzer" />
+					<EntryCell Label="Dose rate alarm" Placeholder="enter" Keyboard="Numeric" />
+					<ViewCell>
+						<Picker Title="Unit">
+							<Picker.Items>
+								<system:String>abc</system:String>
+								<system:String>xyz</system:String>
+							</Picker.Items>
+						</Picker>
+					</ViewCell>
 				</TableSection>
 			</TableView>
 			<ActivityIndicator x:Name="_actInd" BackgroundColor="#66000000" IsRunning="True" />
