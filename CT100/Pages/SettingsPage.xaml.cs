@@ -9,6 +9,8 @@ namespace CT100
         public SettingsPage()
         {
             InitializeComponent();
+
+            BindingContext = new SettingsVM();
         }
     }
 }

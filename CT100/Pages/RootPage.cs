@@ -10,8 +10,6 @@ namespace CT100
             var menuPage = new MenuPage();
             menuPage.MenuItemChanged += OnMenuItemChanged;
 
-
-
             Master = new NavigationPage(menuPage) { Title = "Menu" };
             Detail = menuPage.DefaultPage;
         }
