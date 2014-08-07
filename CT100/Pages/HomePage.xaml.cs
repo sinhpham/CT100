@@ -15,18 +15,14 @@ namespace CT100
             BindingContext = new HomeVM();
             var ble = DependencyService.Get<IBLE>();
 
-            try
-            {
-                ble.Init();
-            }
-            catch (InvalidOperationException ioe)
-            {
-                DisplayAlert("Alert", ioe.Message, "OK");
-            }
-
             ble.DeviceFound += (sender, e) =>
             {
                 VM.Devices.Add(e.Device);
+            };
+
+            ble.ErrorOccurred += (sender, e) =>
+            {
+                DisplayAlert("Alert", e.Message, "OK");
             };
 
             const string scanStr = "scan";
@@ -65,6 +61,8 @@ namespace CT100
             };
 
             ToolbarItems.Add(scanTI);
+
+            ble.Init();
         }
 
         public HomeVM VM { get { return (HomeVM)BindingContext; } }

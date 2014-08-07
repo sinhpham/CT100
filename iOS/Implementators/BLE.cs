@@ -24,8 +24,7 @@ namespace CT100.iOS
                 Debug.WriteLine("ble state updated: {0}", _cbcm.State);
                 if (_cbcm.State == CBCentralManagerState.Unsupported || _cbcm.State == CBCentralManagerState.Unauthorized)
                 {
-                    // TODO: handle this in the main thread.
-                    //throw new InvalidOperationException("Bluetooth not supported");
+                    RaiseErrorOccurred("Bluetooth not supported");
                 }
             };
 
@@ -243,6 +242,7 @@ namespace CT100.iOS
         CBCharacteristic _battData;
 
         public event EventHandler<DeviceFoundEventArgs> DeviceFound;
+        public event EventHandler<ErrorOccurredAventArgs> ErrorOccurred;
 
         public void RaiseDeviceFound(CT100Device d)
         {
@@ -250,6 +250,15 @@ namespace CT100.iOS
             if (handler != null)
             {
                 handler(this, new DeviceFoundEventArgs(){ Device = d });
+            }
+        }
+
+        public void RaiseErrorOccurred(string mess)
+        {
+            var handler = ErrorOccurred;
+            if (handler != null)
+            {
+                handler(this, new ErrorOccurredAventArgs(){ Message = mess });
             }
         }
 
