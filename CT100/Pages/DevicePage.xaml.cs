@@ -19,7 +19,6 @@ namespace CT100
             _batt.Command = new Command(() =>
             {
                 ble.ReadData(() => VM.DeviceData.BatteryLevel);
-
             });
 
             _count.Command = new Command(() =>

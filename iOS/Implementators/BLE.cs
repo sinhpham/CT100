@@ -40,7 +40,7 @@ namespace CT100.iOS
             {
                 _connectedPer = e.Peripheral;
                 InitPeripheral(_connectedPer);
-
+                InitWriteHandle(_connectedDevice);
                 _connectedPer.DiscoverServices();
             };
 
@@ -114,23 +114,14 @@ namespace CT100.iOS
                 Debug.WriteLine("characteristic dis");
                 if (pere.Service == _accService)
                 {
-                    foreach (var charac in _accService.Characteristics)
+                    _accConfig = _accService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFA1", StringComparison.OrdinalIgnoreCase));
+                    // Need to read to show in setting.
+                    currPer.ReadValue(_accConfig);
+
+                    _accData = _accService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFA5", StringComparison.OrdinalIgnoreCase));
+                    if (_accData != null)
                     {
-                        if (charac.UUID.ToString().Equals("FFA1", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Debug.WriteLine("got acc config charac");
-
-                            var dataBytes = new byte[1] { 0x01 };
-                            var nsd = NSData.FromArray(dataBytes);
-
-                            currPer.WriteValue(nsd, charac, CBCharacteristicWriteType.WithResponse);
-                        }
-                        else if (charac.UUID.ToString().Equals("FFA5", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Debug.WriteLine("got acc data z charac");
-                            currPer.SetNotifyValue(true, charac);
-                            _accData = charac;
-                        }
+                        currPer.SetNotifyValue(true, _accData);
                     }
                 }
                 else if (pere.Service == _radService)
@@ -160,11 +151,14 @@ namespace CT100.iOS
                     var bValue = (sbyte)(valArr[0]);
                     var zValue = calcAccel(bValue);
                     _connectedDevice.ZVal = zValue;
-                    //Debug.WriteLine("z value: {0}", zValue);
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _countData))
                 {
                     _connectedDevice.RadCount = BitConverter.ToInt32(valArr, 0);
+                }
+                else if (object.ReferenceEquals(pere.Characteristic, _accConfig))
+                {
+                    _connectedDevice.AccelEnable = BitConverter.ToBoolean(valArr, 0);
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _battData))
                 {
@@ -198,7 +192,6 @@ namespace CT100.iOS
 
         public void ReadData<T>(Expression<Func<T>> selectorExpression)
         {
-            //_connectedPer.ReadValue(_battData);
             if (selectorExpression == null)
             {
                 throw new ArgumentNullException("selectorExpression");
@@ -227,12 +220,27 @@ namespace CT100.iOS
             }
         }
 
+        void InitWriteHandle(CT100Device currDev)
+        {
+            currDev.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == PropertyHelper<CT100Device>.GetProperty(x => x.AccelEnable).Name)
+                {
+                    var dataBytes = BitConverter.GetBytes(_connectedDevice.AccelEnable);
+                    var nsd = NSData.FromArray(dataBytes);
+
+                    _connectedPer.WriteValue(nsd, _accConfig, CBCharacteristicWriteType.WithResponse);
+                }
+            };
+        }
+
         CBCentralManager _cbcm;
         List<CBPeripheral> _perList = new List<CBPeripheral>();
         CBPeripheral _connectedPer;
         CT100Device _connectedDevice;
 
         CBService _accService;
+        CBCharacteristic _accConfig;
         CBCharacteristic _accData;
 
         CBService _radService;

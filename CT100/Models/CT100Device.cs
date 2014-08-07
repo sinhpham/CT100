@@ -30,10 +30,19 @@ namespace CT100
         }
 
         int _radCount;
+
         public int RadCount
         {
             get { return _radCount; }
             set { SetProperty(ref _radCount, value); }
+        }
+
+        bool _accelEnable;
+
+        public bool AccelEnable
+        {
+            get { return _accelEnable; }
+            set { SetProperty(ref _accelEnable, value); }
         }
     }
 }

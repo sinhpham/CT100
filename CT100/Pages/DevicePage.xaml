@@ -12,7 +12,7 @@
 					<local:StyledTextCell x:Name="_count" Text="Count" Detail="{Binding DeviceData.RadCount}" Style="Value1" />
 				</TableSection>
 				<TableSection Title="Settings">
-					<SwitchCell Text="Enable alert" />
+					<SwitchCell x:Name="_accelEnable" Text="Enable alert" On="{Binding DeviceData.AccelEnable}"/>
 				</TableSection>
 			</TableView>
 			<ActivityIndicator x:Name="_actInd" BackgroundColor="#66000000" IsRunning="True" />
