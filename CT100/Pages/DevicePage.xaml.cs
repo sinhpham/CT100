@@ -30,8 +30,9 @@ namespace CT100
             Task.Run(async () =>
             {
                 await Task.Delay(2000);
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(async () =>
                 {
+                    await _actInd.FadeTo(0);
                     _grid.Children.Remove(_actInd);
                 });
             });

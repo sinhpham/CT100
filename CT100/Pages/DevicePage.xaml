@@ -15,7 +15,7 @@
 					<SwitchCell Text="Enable alert" />
 				</TableSection>
 			</TableView>
-			<ActivityIndicator x:Name="_actInd" BackgroundColor="#aa000000" IsRunning="True"/>
+			<ActivityIndicator x:Name="_actInd" BackgroundColor="#66000000" IsRunning="True" />
 		</Grid>
 	</ContentPage.Content>
 </ContentPage>
