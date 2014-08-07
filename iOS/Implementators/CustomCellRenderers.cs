@@ -17,7 +17,7 @@ namespace CT100.iOS
             var style = UITableViewCellStyle.Default;
             Enum.TryParse(sTextCell.Style, out style);
 
-            string text = "Xamarin.Forms.TextCell";
+            string text = "Xamarin.Forms.StyledTextCell";
             CellTableViewCell cellTableViewCell = tv.DequeueReusableCell(text) as CellTableViewCell;
             if (cellTableViewCell == null)
             {
@@ -45,6 +45,10 @@ namespace CT100.iOS
             Enum.TryParse(sTextCell.Accessory, out acc);
 
             cellTableViewCell.Accessory = acc;
+
+            var selectionStyle = UITableViewCellSelectionStyle.Default;
+            Enum.TryParse(sTextCell.SelectionStyle, out selectionStyle);
+            cellTableViewCell.SelectionStyle = selectionStyle;
 
             return cellTableViewCell;
         }

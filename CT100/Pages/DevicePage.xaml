@@ -8,13 +8,13 @@
 			<TableView Intent="Form" HasUnevenRows="True">
 				<TableSection Title="Data">
 					<TextCell x:Name="_batt" Text="Battery" Detail="{Binding DeviceData.BatteryLevel, StringFormat='{0}%'}" />
-					<local:StyledTextCell x:Name="_zVal" Text="Z Value" Detail="{Binding DeviceData.ZVal}" Style="Value1" />
+					<local:StyledTextCell x:Name="_zVal" Text="Z Value" Detail="{Binding DeviceData.ZVal}" Style="Value1" SelectionStyle="None" />
 					<local:StyledTextCell x:Name="_count" Text="Count" Detail="{Binding DeviceData.RadCount}" Style="Value1" />
 				</TableSection>
 				<TableSection Title="Reading">
-					<local:StyledTextCell Text="2 Minute Average" TextFont="Bold,Large" DetailTextFont="Italic" Height="80" Detail="12345" Style="Value1" />
-					<local:StyledTextCell Text="6 Second Average" Detail="12" Style="Value1" />
-					<local:StyledTextCell Text="Total" Detail="12345" Style="Value1" />
+					<local:StyledTextCell Text="2 Minute Average" TextFont="Bold,Large" DetailTextFont="Italic" Height="80" Detail="12345" Style="Value1" SelectionStyle="None"/>
+					<local:StyledTextCell Text="6 Second Average" Detail="12" Style="Value1" SelectionStyle="None"/>
+					<local:StyledTextCell Text="Total" Detail="12345" Style="Value1" SelectionStyle="None"/>
 				</TableSection>
 				<TableSection Title="Settings">
 					<SwitchCell x:Name="_accelEnable" Text="Enable alert" On="{Binding DeviceData.AccelEnable}" />

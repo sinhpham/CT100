@@ -30,8 +30,13 @@ namespace CT100.iOS
 
             _cbcm.DiscoveredPeripheral += (object s, CBDiscoveredPeripheralEventArgs e) =>
             {
+                // Avoid duplication.
+                if (_discoveredPer.IndexOf(e.Peripheral) != -1)
+                {
+                    return;
+                }
                 var d = new CT100Device() { Name = e.Peripheral.Name, UUID = e.Peripheral.Identifier.AsString() }; 
-                _perList.Add(e.Peripheral);
+                _discoveredPer.Add(e.Peripheral);
                 RaiseDeviceFound(d);
                 Debug.WriteLine("Found: {0}", e.Peripheral.Name);
             };
@@ -169,7 +174,7 @@ namespace CT100.iOS
         {
             _connectedDevice = d;
 
-            var currPer = _perList.FirstOrDefault(p => string.CompareOrdinal(p.Identifier.AsString(), d.UUID) == 0);
+            var currPer = _discoveredPer.FirstOrDefault(p => string.CompareOrdinal(p.Identifier.AsString(), d.UUID) == 0);
 
             if (currPer != null)
             {
@@ -223,7 +228,7 @@ namespace CT100.iOS
         }
 
         CBCentralManager _cbcm;
-        List<CBPeripheral> _perList = new List<CBPeripheral>();
+        List<CBPeripheral> _discoveredPer = new List<CBPeripheral>();
         CBPeripheral _connectedPer;
         CT100Device _connectedDevice;
 
