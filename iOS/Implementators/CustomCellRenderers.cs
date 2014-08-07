@@ -31,10 +31,12 @@ namespace CT100.iOS
             sTextCell.PropertyChanged += new PropertyChangedEventHandler(cellTableViewCell.HandlePropertyChanged);
             cellTableViewCell.PropertyChanged = new Action<object, PropertyChangedEventArgs>(this.HandlePropertyChanged);
             cellTableViewCell.TextLabel.Text = sTextCell.Text;
+            cellTableViewCell.TextLabel.Font = sTextCell.TextFont.ToUIFont();
 
             if (cellTableViewCell.DetailTextLabel != null)
             {
                 cellTableViewCell.DetailTextLabel.Text = sTextCell.Detail;
+                cellTableViewCell.DetailTextLabel.Font = sTextCell.DetailTextFont.ToUIFont();
             }
 
             base.UpdateBackground(cellTableViewCell, item);

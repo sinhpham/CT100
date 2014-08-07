@@ -39,12 +39,5 @@ namespace CT100
 
         public DeviceVM VM { get { return (DeviceVM)BindingContext; } }
     }
-
-    public class StyledTextCell : TextCell
-    {
-        public string Style{ get; set; }
-
-        public string Accessory{ get; set; }
-    }
 }
 
