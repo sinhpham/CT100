@@ -47,9 +47,12 @@ namespace CT100.iOS
             cellTableViewCell.Accessory = acc;
 
             var selectionStyle = UITableViewCellSelectionStyle.Default;
-            Enum.TryParse(sTextCell.SelectionStyle, out selectionStyle);
-            cellTableViewCell.SelectionStyle = selectionStyle;
+            if (sTextCell.SelectionStyle != null)
+            {
+                Enum.TryParse(sTextCell.SelectionStyle, out selectionStyle);
+            }
 
+            cellTableViewCell.SelectionStyle = selectionStyle;
             return cellTableViewCell;
         }
     }
