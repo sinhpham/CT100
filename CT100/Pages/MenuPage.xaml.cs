@@ -25,7 +25,7 @@ namespace CT100
             _menuItems = new List<MenuItem>()
             {
                 new MenuItem("Home", () => new HomePage()),
-                new MenuItem("Settings", () => new ContentPage()),
+                new MenuItem("Settings", () => new SettingsPage()),
                 new MenuItem("About", () => new ContentPage()),
             };
 

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:CT100;assembly=CT100" x:Class="CT100.SettingsPage">
+	<ContentPage.Content>
+		<TableView Intent="Form" HasUnevenRows="True">
+			<TableSection Title="Phone Settings">
+				<SwitchCell Text="Data Sharing" On="{Binding DeviceData.AccelEnable}" />
+				<SwitchCell Text="Phone screen timeout" On="{Binding DeviceData.AccelEnable}" />
+				<EntryCell Label="Dose rate alarm" Placeholder="enter"/>
+				<EntryCell Label="Accumulated dose rate alarm"/>
+			</TableSection>
+		</TableView>
+	</ContentPage.Content>
+</ContentPage>
