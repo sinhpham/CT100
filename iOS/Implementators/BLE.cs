@@ -25,7 +25,7 @@ namespace CT100.iOS
                 if (_cbcm.State == CBCentralManagerState.Unsupported || _cbcm.State == CBCentralManagerState.Unauthorized)
                 {
                     // TODO: handle this in the main thread.
-                    throw new InvalidOperationException("Bluetooth not supported");
+                    //throw new InvalidOperationException("Bluetooth not supported");
                 }
             };
 
@@ -221,6 +221,10 @@ namespace CT100.iOS
             else if (requestProp.Equals(countProp))
             {
                 _connectedPer.ReadValue(_countData);
+            }
+            else
+            {
+                Debug.WriteLine("Invalid read data command");
             }
         }
 

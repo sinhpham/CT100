@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace CT100
 {
@@ -24,6 +25,15 @@ namespace CT100
             _count.Command = new Command(() =>
             {
                 ble.ReadData(() => VM.DeviceData.RadCount);
+            });
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(2000);
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    _grid.Children.Remove(_actInd);
+                });
             });
         }
 
