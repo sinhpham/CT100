@@ -47,33 +47,21 @@ namespace CT100.iOS
             _cbcm.DisconnectedPeripheral += (object sender, CBPeripheralErrorEventArgs e) =>
             {
                 Debug.WriteLine("Disconnected");
-                // create the notification
+
                 var notification = new UILocalNotification();
-
-                // set the fire date (the date time in which it will fire)
                 notification.FireDate = DateTime.Now;
-
-                // configure the alert stuff
                 notification.AlertAction = "View Alert";
                 notification.AlertBody = "Current sensor disconnected!";
-
-                // modify the badge
-                //notification.ApplicationIconBadgeNumber = 1;
-
-                // set the sound to be the default sound
                 notification.SoundName = UILocalNotification.DefaultSoundName;
-
-                // schedule it
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
                 // Trying to reconnect
-                //                var perList = _cbcm.RetrievePeripheralsWithIdentifiers(_connectedUUID);
-                //                var cPer = perList.FirstOrDefault(x => x.Identifier == _connectedUUID);
-                //                if (cPer != null)
-                //                {
-                //                    _cbcm.ConnectPeripheral(cPer);
-                //                }
-
+                var perList = _cbcm.RetrievePeripheralsWithIdentifiers(_connectedPer.Identifier);
+                var cPer = perList.FirstOrDefault(x => x.Identifier == _connectedPer.Identifier);
+                if (cPer != null)
+                {
+                    _cbcm.ConnectPeripheral(cPer);
+                }
             };
         }
 
