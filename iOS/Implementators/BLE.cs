@@ -26,6 +26,10 @@ namespace CT100.iOS
                 {
                     RaiseErrorOccurred("Bluetooth not supported");
                 }
+                if (_cbcm.State == CBCentralManagerState.PoweredOn)
+                {
+                    Scan();
+                }
             };
 
             _cbcm.DiscoveredPeripheral += (object s, CBDiscoveredPeripheralEventArgs e) =>

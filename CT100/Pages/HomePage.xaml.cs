@@ -25,27 +25,6 @@ namespace CT100
                 DisplayAlert("Alert", e.Message, "OK");
             };
 
-            const string scanStr = "scan";
-            var scanTI = new ToolbarItem(){ Name = scanStr };
-            scanTI.Command = new Command(obj =>
-            {
-                if (string.CompareOrdinal(scanTI.Name, scanStr) == 0)
-                {
-                    // Need to scan.
-                    if (ble.Scan())
-                    {
-                        scanTI.Name = "stop";
-                        // Force refresh UI.
-                        ToolbarItems.Remove(scanTI);
-                        ToolbarItems.Add(scanTI);
-                    }
-                }
-                else
-                {
-                    // TODO: Need to stop scanning.
-                }
-            });
-
             _listView.ItemSelected += (sender, e) =>
             {
                 if (e.SelectedItem == null)
@@ -59,8 +38,6 @@ namespace CT100
 
                 Navigation.PushAsync(dp);
             };
-
-            ToolbarItems.Add(scanTI);
 
             ble.Init();
         }

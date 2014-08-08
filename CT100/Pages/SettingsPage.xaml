@@ -3,8 +3,8 @@
 	<ContentPage.Content>
 		<local:NonSelectableTableView Intent="Form">
 			<TableSection Title="Phone Settings">
-				<SwitchCell Text="Data Sharing" />
-				<SwitchCell Text="Phone screen timeout" />
+				<SwitchCell Text="Data Sharing" On="{Binding DataSharing}"/>
+				<SwitchCell Text="Phone screen timeout" On="{Binding ScreenTimeout}"/>
 				<EntryCell Label="Dose rate alarm" Placeholder="enter" Keyboard="Numeric" />
 				<EntryCell Label="Accumulated dose rate alarm" Keyboard="Numeric" />
 			</TableSection>
