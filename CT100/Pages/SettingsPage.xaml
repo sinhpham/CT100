@@ -5,8 +5,8 @@
 			<TableSection Title="Phone Settings">
 				<SwitchCell Text="Data Sharing" On="{Binding DataSharing}"/>
 				<SwitchCell Text="Phone screen timeout" On="{Binding ScreenTimeout}"/>
-				<EntryCell Label="Dose rate alarm" Placeholder="enter" Keyboard="Numeric" />
-				<EntryCell Label="Accumulated dose rate alarm" Keyboard="Numeric" />
+				<EntryCell Label="Dose rate alarm" Text="{Binding Avg2MinAlarm}" Keyboard="Numeric" />
+				<EntryCell Label="Accumulated dose rate alarm" Text="{Binding TotalAlarm}" Keyboard="Numeric" />
 			</TableSection>
 			<TableSection Title="Location">
 			<local:StyledTextCell Text="Time" Detail="{Binding Timestamp, StringFormat='{0}'}" Style="Value1" SelectionStyle="None" />

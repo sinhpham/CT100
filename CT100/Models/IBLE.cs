@@ -13,6 +13,8 @@ namespace CT100
 
         void ReadData<T>(Expression<Func<T>> selectorExpression);
 
+        void ReadCountArr();
+
         event EventHandler<DeviceFoundEventArgs> DeviceFound;
         event EventHandler<ErrorOccurredAventArgs> ErrorOccurred;
     }

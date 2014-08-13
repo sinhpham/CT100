@@ -67,6 +67,32 @@ namespace CT100
             }
         }
 
+        public double Avg2MinAlarm
+        {
+            get { return GetSettingValueOrDefault(0.0); }
+            set
+            {
+                if (AddOrUpdateSettingValue(value))
+                {
+                    AppSettings.Save();
+                }
+                RaisePropertyChanged(() => Avg2MinAlarm);
+            }
+        }
+
+        public double TotalAlarm
+        {
+            get { return GetSettingValueOrDefault(0.0); }
+            set
+            {
+                if (AddOrUpdateSettingValue(value))
+                {
+                    AppSettings.Save();
+                }
+                RaisePropertyChanged(() => TotalAlarm);
+            }
+        }
+
         IGeolocator _geo;
 
         DateTimeOffset _timestamp;

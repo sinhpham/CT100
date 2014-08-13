@@ -21,6 +21,11 @@ namespace CT100
                 ble.ReadData(() => VM.DeviceData.BatteryLevel);
             });
 
+            _radCountArr.Command = new Command(() =>
+            {
+                ble.ReadCountArr();
+            });
+
             _count.Command = new Command(() =>
             {
                 ble.ReadData(() => VM.DeviceData.RadCount);

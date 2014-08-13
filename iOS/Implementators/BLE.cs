@@ -84,14 +84,7 @@ namespace CT100.iOS
                     return;
                 }
 
-                _accService = currPer.Services.FirstOrDefault(ser => ser.UUID.ToString().Equals("FFA0", StringComparison.OrdinalIgnoreCase));
-                if (_accService != null)
-                {
-                    Debug.WriteLine("Got acc service");
-                    currPer.DiscoverCharacteristics(_accService);
-                }
-
-                _radService = currPer.Services.FirstOrDefault(ser => ser.UUID.ToString().Equals("AA70", StringComparison.OrdinalIgnoreCase));
+                _radService = currPer.Services.FirstOrDefault(ser => ser.UUID.ToString().Equals("FFD0", StringComparison.OrdinalIgnoreCase));
                 if (_radService != null)
                 {
                     Debug.WriteLine("Got radiation service");
@@ -109,24 +102,27 @@ namespace CT100.iOS
             currPer.DiscoverCharacteristic += (object persender, CBServiceEventArgs pere) =>
             {
                 Debug.WriteLine("characteristic dis");
-                if (pere.Service == _accService)
+                if (pere.Service == _radService)
                 {
-                    _accConfig = _accService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFA1", StringComparison.OrdinalIgnoreCase));
-                    // Need to read to show in setting.
-                    currPer.ReadValue(_accConfig);
-
-                    _accData = _accService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFA5", StringComparison.OrdinalIgnoreCase));
-                    if (_accData != null)
+                    _radCount = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD1", StringComparison.OrdinalIgnoreCase));
+                    if (_radCount != null)
                     {
-                        currPer.SetNotifyValue(true, _accData);
+                        Debug.WriteLine("Got rad count characteristic");
+                        currPer.SetNotifyValue(true, _radCount);
                     }
-                }
-                else if (pere.Service == _radService)
-                {
-                    _countData = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("AA72", StringComparison.OrdinalIgnoreCase));
-                    if (_countData != null)
+
+                    _radCountArr = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD2", StringComparison.OrdinalIgnoreCase));
+                    if (_radCount != null)
                     {
-                        Debug.WriteLine("Got key count characteristic");
+                        Debug.WriteLine("Got rad count arr characteristic");
+                    }
+
+                    _enableBuzzer = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD5", StringComparison.OrdinalIgnoreCase));
+                    if (_radCount != null)
+                    {
+                        Debug.WriteLine("Got enable buzzer characteristic");
+                        // Need to read to show in setting.
+                        currPer.ReadValue(_enableBuzzer);
                     }
                 }
                 else if (pere.Service == _battService)
@@ -143,19 +139,17 @@ namespace CT100.iOS
             {
                 var valArr = pere.Characteristic.Value.ToArray();
 
-                if (object.ReferenceEquals(pere.Characteristic, _accData))
-                {
-                    var bValue = (sbyte)(valArr[0]);
-                    var zValue = calcAccel(bValue);
-                    _connectedDevice.ZVal = zValue;
-                }
-                else if (object.ReferenceEquals(pere.Characteristic, _countData))
+                if (object.ReferenceEquals(pere.Characteristic, _radCount))
                 {
                     _connectedDevice.RadCount = BitConverter.ToInt32(valArr, 0);
                 }
-                else if (object.ReferenceEquals(pere.Characteristic, _accConfig))
+                else if (object.ReferenceEquals(pere.Characteristic, _radCountArr))
                 {
-                    _connectedDevice.AccelEnable = BitConverter.ToBoolean(valArr, 0);
+                    Console.WriteLine(BitConverter.ToString(valArr,0));
+                }
+                else if (object.ReferenceEquals(pere.Characteristic, _enableBuzzer))
+                {
+                    _connectedDevice.EnableBuzzer = BitConverter.ToBoolean(valArr, 0);
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _battData))
                 {
@@ -209,7 +203,7 @@ namespace CT100.iOS
             }
             else if (requestProp.Equals(countProp))
             {
-                _connectedPer.ReadValue(_countData);
+                _connectedPer.ReadValue(_radCount);
             }
             else
             {
@@ -217,16 +211,21 @@ namespace CT100.iOS
             }
         }
 
+        public void ReadCountArr()
+        {
+            _connectedPer.ReadValue(_radCountArr);
+        }
+
         void InitWriteHandle(CT100Device currDev)
         {
             currDev.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName == PropertyHelper<CT100Device>.GetProperty(x => x.AccelEnable).Name)
+                if (e.PropertyName == PropertyHelper<CT100Device>.GetProperty(x => x.EnableBuzzer).Name)
                 {
-                    var dataBytes = BitConverter.GetBytes(_connectedDevice.AccelEnable);
+                    var dataBytes = BitConverter.GetBytes(_connectedDevice.EnableBuzzer);
                     var nsd = NSData.FromArray(dataBytes);
 
-                    _connectedPer.WriteValue(nsd, _accConfig, CBCharacteristicWriteType.WithResponse);
+                    _connectedPer.WriteValue(nsd, _enableBuzzer, CBCharacteristicWriteType.WithResponse);
                 }
             };
         }
@@ -236,12 +235,10 @@ namespace CT100.iOS
         CBPeripheral _connectedPer;
         CT100Device _connectedDevice;
 
-        CBService _accService;
-        CBCharacteristic _accConfig;
-        CBCharacteristic _accData;
-
         CBService _radService;
-        CBCharacteristic _countData;
+        CBCharacteristic _radCount;
+        CBCharacteristic _radCountArr;
+        CBCharacteristic _enableBuzzer;
 
         CBService _battService;
         CBCharacteristic _battData;
@@ -265,14 +262,6 @@ namespace CT100.iOS
             {
                 handler(this, new ErrorOccurredAventArgs(){ Message = mess });
             }
-        }
-
-        float calcAccel(sbyte rawX)
-        {
-            float v;
-            //-- calculate acceleration, unit g, range -2, +2
-            v = (float)((rawX * 1.0) / (64));
-            return v;
         }
     }
 
