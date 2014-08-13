@@ -12,7 +12,7 @@ namespace CT100
         {
             InitializeComponent();
 
-            BindingContext = new HomeVM();
+            BindingContext = App.Container.GetInstance<HomeVM>();
             var ble = DependencyService.Get<IBLE>();
 
             ble.DeviceFound += (sender, e) =>

@@ -10,7 +10,7 @@ namespace CT100
         {
             InitializeComponent();
 
-            BindingContext = new SettingsVM();
+            BindingContext = App.Container.GetInstance<SettingsVM>();
         }
     }
 }
