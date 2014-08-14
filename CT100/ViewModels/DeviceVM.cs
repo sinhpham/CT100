@@ -15,6 +15,22 @@ namespace CT100
             get { return _deviceData; }
             set { SetProperty(ref _deviceData, value); }
         }
+
+        bool _displayingAlert;
+
+        public bool DisplayingAlert
+        {
+            get { return _displayingAlert; }
+            set { SetProperty(ref _displayingAlert, value); }
+        }
+
+        bool _alertDismissed;
+
+        public bool AlertDismissed
+        {
+            get { return _alertDismissed; }
+            set { SetProperty(ref _alertDismissed, value); }
+        }
     }
 }
 

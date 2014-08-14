@@ -48,9 +48,6 @@ namespace CT100
 
                 RaisePropertyChanged(() => Avg2Mins);
                 RaisePropertyChanged(() => Avg6Secs);
-
-                // Alert logic
-
             }
         }
 
