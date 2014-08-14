@@ -85,6 +85,14 @@ namespace CT100
             get { return _enableBuzzer; }
             set { SetProperty(ref _enableBuzzer, value); }
         }
+
+        string _deviceRadCountArr;
+
+        public string DeviceRadCountArr
+        {
+            get { return _deviceRadCountArr; }
+            set { SetProperty(ref _deviceRadCountArr, value); }
+        }
     }
 }
 

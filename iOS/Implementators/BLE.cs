@@ -145,7 +145,7 @@ namespace CT100.iOS
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _radCountArr))
                 {
-                    Console.WriteLine(BitConverter.ToString(valArr,0));
+                    _connectedDevice.DeviceRadCountArr = BitConverter.ToString(valArr,0);
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _enableBuzzer))
                 {
