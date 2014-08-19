@@ -93,6 +93,15 @@ namespace CT100
             get { return _deviceRadCountArr; }
             set { SetProperty(ref _deviceRadCountArr, value); }
         }
+
+
+        int _devRadTotalCountAlertLevel;
+
+        public int DevRadTotalCountAlertLevel
+        {
+            get { return _devRadTotalCountAlertLevel; }
+            set { SetProperty(ref _devRadTotalCountAlertLevel, value); }
+        }
     }
 }
 

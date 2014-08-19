@@ -112,17 +112,25 @@ namespace CT100.iOS
                     }
 
                     _radCountArr = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD2", StringComparison.OrdinalIgnoreCase));
-                    if (_radCount != null)
+                    if (_radCountArr != null)
                     {
                         Debug.WriteLine("Got rad count arr characteristic");
                     }
 
                     _enableBuzzer = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD5", StringComparison.OrdinalIgnoreCase));
-                    if (_radCount != null)
+                    if (_enableBuzzer != null)
                     {
                         Debug.WriteLine("Got enable buzzer characteristic");
                         // Need to read to show in setting.
                         currPer.ReadValue(_enableBuzzer);
+                    }
+
+                    _radTotalCountAlertLevel = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD6", StringComparison.OrdinalIgnoreCase));
+                    if (_radTotalCountAlertLevel != null)
+                    {
+                        Debug.WriteLine("Got rad total count alert characteristic");
+                        // Need to read to show in setting.
+                        currPer.ReadValue(_radTotalCountAlertLevel);
                     }
                 }
                 else if (pere.Service == _battService)
@@ -145,11 +153,16 @@ namespace CT100.iOS
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _radCountArr))
                 {
-                    _connectedDevice.DeviceRadCountArr = BitConverter.ToString(valArr,0);
+                    _connectedDevice.DeviceRadCountArr = BitConverter.ToString(valArr, 0);
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _enableBuzzer))
                 {
                     _connectedDevice.EnableBuzzer = BitConverter.ToBoolean(valArr, 0);
+                }
+                else if (object.ReferenceEquals(pere.Characteristic, _radTotalCountAlertLevel))
+                {
+                    var val = BitConverter.ToInt32(valArr, 0);
+                    _connectedDevice.DevRadTotalCountAlertLevel = val;
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _battData))
                 {
@@ -227,6 +240,13 @@ namespace CT100.iOS
 
                     _connectedPer.WriteValue(nsd, _enableBuzzer, CBCharacteristicWriteType.WithResponse);
                 }
+                else if (e.PropertyName == PropertyHelper<CT100Device>.GetProperty(x => x.DevRadTotalCountAlertLevel).Name)
+                {
+                    var dataBytes = BitConverter.GetBytes(_connectedDevice.DevRadTotalCountAlertLevel);
+                    var nsd = NSData.FromArray(dataBytes);
+
+                    _connectedPer.WriteValue(nsd, _radTotalCountAlertLevel, CBCharacteristicWriteType.WithResponse);
+                }
             };
         }
 
@@ -239,6 +259,7 @@ namespace CT100.iOS
         CBCharacteristic _radCount;
         CBCharacteristic _radCountArr;
         CBCharacteristic _enableBuzzer;
+        CBCharacteristic _radTotalCountAlertLevel;
 
         CBService _battService;
         CBCharacteristic _battData;
