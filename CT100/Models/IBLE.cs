@@ -11,6 +11,8 @@ namespace CT100
 
         void Connect(CT100Device d);
 
+        void Disconnect();
+
         void ReadData<T>(Expression<Func<T>> selectorExpression);
 
         void ReadCountArr();

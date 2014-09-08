@@ -13,14 +13,14 @@ namespace CT100
             InitializeComponent();
 
             BindingContext = App.Container.GetInstance<HomeVM>();
-            var ble = DependencyService.Get<IBLE>();
+            _ble = DependencyService.Get<IBLE>();
 
-            ble.DeviceFound += (sender, e) =>
+            _ble.DeviceFound += (sender, e) =>
             {
                 VM.Devices.Add(e.Device);
             };
 
-            ble.ErrorOccurred += (sender, e) =>
+            _ble.ErrorOccurred += (sender, e) =>
             {
                 DisplayAlert("Alert", e.Message, "OK");
             };
@@ -31,7 +31,7 @@ namespace CT100
                     return;
 
                 var d = (CT100Device)e.SelectedItem;
-                ble.Connect(d);
+                _ble.Connect(d);
                 _listView.SelectedItem = null;
 
                 var dp = new DevicePage(d);
@@ -39,7 +39,16 @@ namespace CT100
                 Navigation.PushAsync(dp);
             };
 
-            ble.Init();
+            _ble.Init();
+        }
+
+        IBLE _ble;
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            _ble.Disconnect();
         }
 
         public HomeVM VM { get { return (HomeVM)BindingContext; } }

@@ -55,6 +55,11 @@ namespace CT100.iOS
 
             _cbcm.DisconnectedPeripheral += (object sender, CBPeripheralErrorEventArgs e) =>
             {
+                if (_intendedDisconnection)
+                {
+                    _intendedDisconnection = false;
+                    return;
+                }
                 Debug.WriteLine("Disconnected");
 
                 var notification = new UILocalNotification();
@@ -194,6 +199,16 @@ namespace CT100.iOS
             }
         }
 
+        public void Disconnect()
+        {
+            if (_connectedPer != null)
+            {
+                _cbcm.CancelPeripheralConnection(_connectedPer);
+                _connectedPer = null;
+                _intendedDisconnection = true;
+            }
+        }
+
         public void ReadData<T>(Expression<Func<T>> selectorExpression)
         {
             if (selectorExpression == null)
@@ -249,6 +264,8 @@ namespace CT100.iOS
                 }
             };
         }
+
+        bool _intendedDisconnection = false;
 
         CBCentralManager _cbcm;
         List<CBPeripheral> _discoveredPer = new List<CBPeripheral>();
