@@ -120,6 +120,16 @@ namespace CT100.iOS
                     if (_radCountArr != null)
                     {
                         Debug.WriteLine("Got rad count arr characteristic");
+                        // Read current rad count array
+                        currPer.ReadValue(_radCountArr);
+                    }
+
+                    _radCountArrEndIdx = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD3", StringComparison.OrdinalIgnoreCase));
+                    if (_radCountArrEndIdx != null)
+                    {
+                        Debug.WriteLine("Got rad count arr end idx characteristic");
+                        // Read current rad count array end idx
+                        currPer.ReadValue(_radCountArrEndIdx);
                     }
 
                     _enableBuzzer = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("FFD5", StringComparison.OrdinalIgnoreCase));
@@ -158,7 +168,21 @@ namespace CT100.iOS
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _radCountArr))
                 {
-                    _connectedDevice.DeviceRadCountArr = BitConverter.ToString(valArr, 0);
+                    // Got rad count array
+                    var idx = 0;
+                    _connectedDevice.DeviceRadCountArr = new List<int>();
+                    while (idx < valArr.Count())
+                    {
+                        _connectedDevice.DeviceRadCountArr.Add(BitConverter.ToInt32(valArr, idx));
+                        idx += 4;
+                    }
+                    _connectedDevice.AssignDeviceCountArr();
+                }
+                else if (object.ReferenceEquals(pere.Characteristic, _radCountArrEndIdx))
+                {
+                    // Got end idx
+                    _connectedDevice.DeviceRadCountEndIdx = BitConverter.ToInt32(valArr, 0);
+                    _connectedDevice.AssignDeviceCountArr();
                 }
                 else if (object.ReferenceEquals(pere.Characteristic, _enableBuzzer))
                 {
@@ -275,6 +299,7 @@ namespace CT100.iOS
         CBService _radService;
         CBCharacteristic _radCount;
         CBCharacteristic _radCountArr;
+        CBCharacteristic _radCountArrEndIdx;
         CBCharacteristic _enableBuzzer;
         CBCharacteristic _radTotalCountAlertLevel;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CT100
 {
@@ -86,14 +87,21 @@ namespace CT100
             set { SetProperty(ref _enableBuzzer, value); }
         }
 
-        string _deviceRadCountArr;
+        List<int> _deviceRadCountArr;
 
-        public string DeviceRadCountArr
+        public List<int> DeviceRadCountArr
         {
             get { return _deviceRadCountArr; }
             set { SetProperty(ref _deviceRadCountArr, value); }
         }
 
+        int? _deviceRadCountEndIdx;
+
+        public int? DeviceRadCountEndIdx
+        {
+            get { return _deviceRadCountEndIdx; }
+            set { SetProperty(ref _deviceRadCountEndIdx, value); }
+        }
 
         int _devRadTotalCountAlertLevel;
 
@@ -101,6 +109,41 @@ namespace CT100
         {
             get { return _devRadTotalCountAlertLevel; }
             set { SetProperty(ref _devRadTotalCountAlertLevel, value); }
+        }
+
+        public void AssignDeviceCountArr()
+        {
+            if (DeviceRadCountArr != null && DeviceRadCountEndIdx != null)
+            {
+
+                var firstList = DeviceRadCountArr.Where((x, i) =>
+                {
+                    return i >= DeviceRadCountEndIdx;
+                });
+                var lastList = DeviceRadCountArr.Where((x, i) =>
+                {
+                    return i < DeviceRadCountEndIdx;
+                });
+                var orderedList = firstList.Concat(lastList).ToList();
+
+                // 2 min array.
+                RadCount2MinsData.Clear();
+                RadCountTotal = 0;
+                foreach (var val in orderedList)
+                {
+                    RadCount2MinsData.Enqueue(val);
+                    RadCountTotal += val;
+                }
+
+                // 6 seconds array
+                _radCount6SecsData.Clear();
+                _radCountTotal6Secs = 0;
+                foreach (var val in orderedList.Skip(orderedList.Count - 6))
+                {
+                    _radCount6SecsData.Enqueue(val);
+                    _radCountTotal6Secs += val;
+                }
+            }
         }
     }
 }
