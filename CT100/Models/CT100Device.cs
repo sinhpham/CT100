@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace CT100
 {
@@ -113,6 +114,10 @@ namespace CT100
 
         public void AssignDeviceCountArr()
         {
+            if (DeviceRadCountArr == null || DeviceRadCountEndIdx == null)
+            {
+                Debug.WriteLine("not enough");
+            }
             if (DeviceRadCountArr != null && DeviceRadCountEndIdx != null)
             {
 

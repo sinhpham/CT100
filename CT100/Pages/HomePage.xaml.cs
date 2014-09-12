@@ -39,7 +39,7 @@ namespace CT100
                 Navigation.PushAsync(dp);
             };
 
-            _ble.Init();
+            //_ble.Init();
         }
 
         IBLE _ble;
@@ -49,6 +49,8 @@ namespace CT100
             base.OnAppearing();
 
             _ble.Disconnect();
+            _ble.Init();
+            VM.Devices.Clear();
         }
 
         public HomeVM VM { get { return (HomeVM)BindingContext; } }

@@ -230,6 +230,9 @@ namespace CT100.iOS
                 _cbcm.CancelPeripheralConnection(_connectedPer);
                 _connectedPer = null;
                 _intendedDisconnection = true;
+
+                _connectedDevice.DeviceRadCountArr = null;
+                _connectedDevice.DeviceRadCountEndIdx = null;
             }
         }
 
