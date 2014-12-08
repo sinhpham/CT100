@@ -42,7 +42,7 @@ namespace CT100.iOS
                 var d = new CT100Device() { Name = e.Peripheral.Name, UUID = e.Peripheral.Identifier.AsString() }; 
                 _discoveredPer.Add(e.Peripheral);
                 RaiseDeviceFound(d);
-                Debug.WriteLine("Found: {0}", e.Peripheral.Name);
+                Debug.WriteLine("Found: {0}, UUID = {1}", e.Peripheral.Name, e.Peripheral.Identifier.AsString());
             };
 
             _cbcm.ConnectedPeripheral += (sender, e) =>
