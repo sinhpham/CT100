@@ -7,6 +7,15 @@ namespace CT100
 {
     public class CT100Device : NPCBase
     {
+        public CT100Device()
+        {
+            CpmR = GS * 3600;
+            CpnSv = CpmR / 10000;
+            nSvpC = 1 / CpnSv;
+            uSvpC = nSvpC / 1000;
+            DCF = uSvpC * ECF;
+        }
+
         public string Name { get; set; }
 
         public string UUID { get; set; }
@@ -150,6 +159,32 @@ namespace CT100
                 }
             }
         }
+
+        const double ECF = 0.6;
+        const double GS = 7.5;
+
+        readonly double CpmR;
+        readonly double CpnSv;
+        readonly double nSvpC;
+        readonly double uSvpC;
+        readonly double DCF;
+
+        public double DoseRate2Mins
+        {
+            get
+            {
+                return Avg2Mins * DCF * 3600;
+            }
+        }
+
+        public double DoseRate6Secs
+        {
+            get
+            {
+                return Avg6Secs * DCF * 3600;
+            }
+        }
+
     }
 }
 
