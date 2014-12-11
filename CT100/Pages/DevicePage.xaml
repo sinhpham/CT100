@@ -15,7 +15,8 @@
 					<local:StyledTextCell Text="2 Minute Average" TextFont="Bold,Large" DetailTextFont="Italic" Height="80" Detail="{Binding DeviceData.Avg2Mins, StringFormat='{0:F2}'}" Style="Value1" SelectionStyle="None"/>
 					<local:StyledTextCell Text="6 Second Average" Detail="{Binding DeviceData.Avg6Secs, StringFormat='{0:F2}'}" Style="Value1" SelectionStyle="None"/>
 					<local:StyledTextCell Text="Total" Detail="{Binding DeviceData.RadCountTotal}" Style="Value1" SelectionStyle="None"/>
-
+					<local:StyledTextCell Text="DoseRate2Mins" Detail="{Binding DeviceData.DoseRate2Mins}" Style="Value1" SelectionStyle="None"/>
+					<local:StyledTextCell Text="DoseRate6Secs" Detail="{Binding DeviceData.DoseRate6Secs}" Style="Value1" SelectionStyle="None"/>
 				</TableSection>
 				<TableSection Title="Settings">
 					<SwitchCell x:Name="_enableBuzzer" Text="Enable buzzer" On="{Binding DeviceData.EnableBuzzer}" />

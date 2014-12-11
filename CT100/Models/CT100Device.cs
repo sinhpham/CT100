@@ -59,6 +59,8 @@ namespace CT100
 
                 RaisePropertyChanged(() => Avg2Mins);
                 RaisePropertyChanged(() => Avg6Secs);
+                RaisePropertyChanged(() => DoseRate2Mins);
+                RaisePropertyChanged(() => DoseRate6Secs);
             }
         }
 
@@ -127,7 +129,7 @@ namespace CT100
             {
                 Debug.WriteLine("not enough");
             }
-            if (DeviceRadCountArr != null && DeviceRadCountEndIdx != null)
+            else
             {
 
                 var firstList = DeviceRadCountArr.Where((x, i) =>

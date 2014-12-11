@@ -92,15 +92,23 @@ namespace CT100.iOS
                 _radService = currPer.Services.FirstOrDefault(ser => ser.UUID.ToString().Equals("F100FFD0-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                 if (_radService != null)
                 {
-                    Debug.WriteLine("Got radiation service");
+
                     currPer.DiscoverCharacteristics(_radService);
+                }
+                else
+                {
+                    Debug.WriteLine("Radiation service missing!!!");
                 }
 
                 _battService = currPer.Services.FirstOrDefault(ser => ser.UUID.ToString().Equals("180F", StringComparison.OrdinalIgnoreCase));
                 if (_battService != null)
                 {
-                    Debug.WriteLine("Got battery serivce");
+
                     currPer.DiscoverCharacteristics(_battService);
+                }
+                else
+                {
+                    Debug.WriteLine("Battery serivce missing!!!");
                 }
             };
 
@@ -112,40 +120,60 @@ namespace CT100.iOS
                     _radCount = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("F100FFD1-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                     if (_radCount != null)
                     {
-                        Debug.WriteLine("Got rad count characteristic");
+
                         currPer.SetNotifyValue(true, _radCount);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Rad count characteristic missing!!!");
                     }
 
                     _radCountArr = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("F100FFD2-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                     if (_radCountArr != null)
                     {
-                        Debug.WriteLine("Got rad count arr characteristic");
+
                         // Read current rad count array
                         currPer.ReadValue(_radCountArr);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Rad count arr characteristic missing!!!");
                     }
 
                     _radCountArrEndIdx = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("F100FFD3-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                     if (_radCountArrEndIdx != null)
                     {
-                        Debug.WriteLine("Got rad count arr end idx characteristic");
+
                         // Read current rad count array end idx
                         currPer.ReadValue(_radCountArrEndIdx);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Rad count arr end idx characteristic missing!!!");
                     }
 
                     _enableBuzzer = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("F100FFD5-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                     if (_enableBuzzer != null)
                     {
-                        Debug.WriteLine("Got enable buzzer characteristic");
+
                         // Need to read to show in setting.
                         currPer.ReadValue(_enableBuzzer);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Enable buzzer characteristic missing!!!");
                     }
 
                     _radTotalCountAlertLevel = _radService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("F100FFD6-0451-4100-B100-000000000000", StringComparison.OrdinalIgnoreCase));
                     if (_radTotalCountAlertLevel != null)
                     {
-                        Debug.WriteLine("Got rad total count alert characteristic");
+
                         // Need to read to show in setting.
                         currPer.ReadValue(_radTotalCountAlertLevel);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Rad total count alert characteristic missing!!!");
                     }
                 }
                 else if (pere.Service == _battService)
@@ -153,7 +181,11 @@ namespace CT100.iOS
                     _battData = _battService.Characteristics.FirstOrDefault(ch => ch.UUID.ToString().Equals("2A19", StringComparison.OrdinalIgnoreCase));
                     if (_battData != null)
                     {
-                        Debug.WriteLine("Got battery level charac");
+
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Battery level charac missing!!!");
                     }
                 }
             };
