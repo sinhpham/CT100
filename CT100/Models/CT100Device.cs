@@ -43,12 +43,13 @@ namespace CT100
                 SetProperty(ref _radCount, value);
 
                 RadCountTotal += _radCount;
+                RadCountTotal2Mins += _radCount;
                 _radCountTotal6Secs += _radCount;
 
                 RadCount2MinsData.Enqueue(_radCount);
                 if (RadCount2MinsData.Count > 120)
                 {
-                    RadCountTotal -= RadCount2MinsData.Dequeue();
+                    RadCountTotal2Mins -= RadCount2MinsData.Dequeue();
                 }
 
                 _radCount6SecsData.Enqueue(_radCount);
@@ -64,14 +65,21 @@ namespace CT100
             }
         }
 
-        int _radCountTotal;
+        int _radCountTotal2Mins;
 
-        public int RadCountTotal
+        public int RadCountTotal2Mins
+        {
+            get { return _radCountTotal2Mins; }
+            set { SetProperty(ref _radCountTotal2Mins, value); }
+        }
+
+        Int64 _radCountTotal;
+
+        public Int64 RadCountTotal
         {
             get { return _radCountTotal; }
             set { SetProperty(ref _radCountTotal, value); }
         }
-
 
         Queue<int> _radCount2MinsData = new Queue<int>();
 
@@ -83,7 +91,7 @@ namespace CT100
 
         public double Avg2Mins
         {
-            get { return (double)RadCountTotal / RadCount2MinsData.Count; }
+            get { return (double)RadCountTotal2Mins / RadCount2MinsData.Count; }
         }
 
         public double Avg6Secs
@@ -144,12 +152,14 @@ namespace CT100
 
                 // 2 min array.
                 RadCount2MinsData.Clear();
-                RadCountTotal = 0;
+                RadCountTotal2Mins = 0;
                 foreach (var val in orderedList)
                 {
                     RadCount2MinsData.Enqueue(val);
-                    RadCountTotal += val;
+                    RadCountTotal2Mins += val;
                 }
+
+                RadCountTotal = RadCountTotal2Mins;
 
                 // 6 seconds array
                 _radCount6SecsData.Clear();
